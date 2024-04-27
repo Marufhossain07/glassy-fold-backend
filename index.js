@@ -36,6 +36,12 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result)
       })
+
+      app.post('/items', async(req,res)=>{
+        const item = req.body;
+        const result = await itemsCollection.insertOne(item);
+        res.send(result)
+      })
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     // Send a ping to confirm a successful connection
