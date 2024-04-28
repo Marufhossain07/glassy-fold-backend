@@ -31,17 +31,33 @@ async function run() {
 
     const itemsCollection = client.db('itemsDB').collection('items');
 
-    app.get('/items', async(req,res)=>{
-        const cursor = itemsCollection.find();
-        const result = await cursor.toArray();
-        res.send(result)
-      })
+    app.get('/items', async (req, res) => {
+      const cursor = itemsCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
 
-      app.post('/items', async(req,res)=>{
-        const item = req.body;
-        const result = await itemsCollection.insertOne(item);
-        res.send(result)
-      })
+    app.post('/items', async (req, res) => {
+      const item = req.body;
+      const result = await itemsCollection.insertOne(item);
+      res.send(result)
+    })
+
+    app.get('/items/:email', async (req, res) => {
+      const myEmail = req.params.email;
+      const query = { email: myEmail };
+      const result = await itemsCollection.find(query).toArray()
+      res.send(result)
+    })
+
+    app.get('/items/:email/:customization', async (req, res) => {
+      const sort = req.params.customization;
+      const myEmail = req.params.email;
+      const query = { email: myEmail , customization: sort};
+      const cursor = itemsCollection.find(query)
+      const result = await cursor.toArray()
+      res.send(result);
+    })
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     // Send a ping to confirm a successful connection
@@ -55,10 +71,10 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req,res)=>{
-    res.send('Server Running')
+app.get('/', (req, res) => {
+  res.send('Server Running')
 })
 
-app.listen(port, (req,res)=>{
-    console.log(`your server is running on ${port}`)
+app.listen(port, (req, res) => {
+  console.log(`your server is running on ${port}`)
 })
