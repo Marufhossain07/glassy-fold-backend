@@ -32,7 +32,7 @@ async function run() {
     const itemsCollection = client.db('itemsDB').collection('items');
     const categoryCollection = client.db('itemsDB').collection('categories');
 
-    
+
     app.get('/categories', async(req,res)=>{
       const cursor = categoryCollection.find();
       const result = await cursor.toArray();
@@ -53,6 +53,12 @@ async function run() {
     app.get('/items-from-email/:email', async (req, res) => {
       const myEmail = req.params.email;
       const query = { email: myEmail };
+      const result = await itemsCollection.find(query).toArray()
+      res.send(result)
+    })
+    app.get('/items-from-sub/:sub', async (req, res) => {
+      const sub = req.params.sub;
+      const query = { sub: sub };
       const result = await itemsCollection.find(query).toArray()
       res.send(result)
     })
