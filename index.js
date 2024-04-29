@@ -43,26 +43,55 @@ async function run() {
       res.send(result)
     })
 
-    app.get('/items/:email', async (req, res) => {
+    app.get('/items-from-email/:email', async (req, res) => {
       const myEmail = req.params.email;
       const query = { email: myEmail };
       const result = await itemsCollection.find(query).toArray()
+      res.send(result)
+    })
+    app.get('/items/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await itemsCollection.findOne(query)
       res.send(result)
     })
 
     app.get('/items/:email/:customization', async (req, res) => {
       const sort = req.params.customization;
       const myEmail = req.params.email;
-      const query = { email: myEmail , customization: sort};
+      const query = { email: myEmail, customization: sort };
       const cursor = itemsCollection.find(query)
       const result = await cursor.toArray()
       res.send(result);
     })
 
-    app.delete('/items/:id', async(req,res)=>{
+    app.put('/items/:id', async(req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
-      const result= await itemsCollection.deleteOne(query);
+      const filter = { _id: new ObjectId(id) }
+      const updatedItem = req.body;
+      const options = { upsert: true };
+      const item = {
+        $set: {
+          item: updatedItem.item,
+          sub: updatedItem.sub,
+          description: updatedItem.description,
+          price: updatedItem.price,
+          rating: updatedItem.rating,
+          customization: updatedItem.customization,
+          time: updatedItem.time,
+          stock: updatedItem.stock,
+          photo: updatedItem.photo
+        }
+      }
+
+      const result = await itemsCollection.updateOne(filter,item,options);
+      res.send(result)
+    })
+
+    app.delete('/items/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await itemsCollection.deleteOne(query);
       res.send(result);
     })
     // Connect the client to the server	(optional starting in v4.7)
