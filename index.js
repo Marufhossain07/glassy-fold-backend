@@ -30,7 +30,14 @@ async function run() {
   try {
 
     const itemsCollection = client.db('itemsDB').collection('items');
+    const categoryCollection = client.db('itemsDB').collection('categories');
 
+    
+    app.get('/categories', async(req,res)=>{
+      const cursor = categoryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
     app.get('/items', async (req, res) => {
       const cursor = itemsCollection.find();
       const result = await cursor.toArray();
